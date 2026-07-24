@@ -13,6 +13,11 @@ out
 # Coverage
 coverage
 
+# Playwright
+test-results
+playwright-report
+blob-report
+
 # Package manager
 pnpm-lock.yaml
 

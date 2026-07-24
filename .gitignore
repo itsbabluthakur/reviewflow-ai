@@ -142,6 +142,15 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
 
+# Vitest
+*.vitest-temp/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
 # Turborepo
 .turbo
 
@@ -153,3 +162,6 @@ supabase/.temp
 .vscode/*
 !.vscode/extensions.json
 .idea
+
+# OS
+.DS_Store

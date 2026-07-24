@@ -12,11 +12,11 @@ This document defines the engineering workflow, coding standards, and review pro
 
 Every contribution should be:
 
-* Small and focused
-* Well documented
-* Fully tested
-* Backward compatible whenever possible
-* Consistent with the project architecture
+- Small and focused
+- Well documented
+- Fully tested
+- Backward compatible whenever possible
+- Consistent with the project architecture
 
 If a change requires a deviation from the documented architecture, update the relevant documentation as part of the same pull request.
 
@@ -36,10 +36,10 @@ If a change requires a deviation from the documented architecture, update the re
 
 Requirements:
 
-* Node.js 22+
-* pnpm
-* Docker
-* Supabase CLI
+- Node.js 22+
+- pnpm
+- Docker
+- Supabase CLI
 
 Install dependencies:
 
@@ -100,24 +100,37 @@ test: add customer service integration tests
 chore: upgrade dependencies
 ```
 
+Commit messages are enforced automatically — see Git Hooks below.
+
+---
+
+# Git Hooks
+
+`pnpm install` installs [Husky](https://typicode.github.io/husky/) hooks automatically via the root `prepare` script — no manual setup required:
+
+- **`pre-commit`** runs `lint-staged` (`.lintstagedrc.json`), which runs `eslint --fix` and `prettier --write` on staged files only, never the whole repository.
+- **`commit-msg`** runs `commitlint` against the Conventional Commits rules above; non-conforming messages are rejected.
+
+If a hook rejects your commit, fix the reported issue and commit again. Don't bypass hooks with `--no-verify`.
+
 ---
 
 # Pull Request Guidelines
 
 Each pull request should:
 
-* Solve one logical problem
-* Be easy to review
-* Include tests where appropriate
-* Update documentation when behavior changes
+- Solve one logical problem
+- Be easy to review
+- Include tests where appropriate
+- Update documentation when behavior changes
 
 Include:
 
-* Summary
-* Motivation
-* Screenshots (if UI changes)
-* Testing notes
-* Migration notes (if applicable)
+- Summary
+- Motivation
+- Screenshots (if UI changes)
+- Testing notes
+- Migration notes (if applicable)
 
 ---
 
@@ -125,38 +138,38 @@ Include:
 
 General rules:
 
-* Prefer readability over cleverness
-* Keep functions focused
-* Avoid duplicated logic
-* Use descriptive names
-* Remove unused code before merging
+- Prefer readability over cleverness
+- Keep functions focused
+- Avoid duplicated logic
+- Use descriptive names
+- Remove unused code before merging
 
 Do not:
 
-* Hardcode secrets
-* Disable security checks
-* Introduce unnecessary dependencies
-* Leave debugging code in production
+- Hardcode secrets
+- Disable security checks
+- Introduce unnecessary dependencies
+- Leave debugging code in production
 
 ---
 
 # TypeScript Standards
 
-* Enable strict mode
-* Avoid `any`
-* Prefer explicit types for public APIs
-* Reuse shared types
-* Validate external input
+- Enable strict mode
+- Avoid `any`
+- Prefer explicit types for public APIs
+- Reuse shared types
+- Validate external input
 
 ---
 
 # React Standards
 
-* Functional components only
-* Prefer server components where appropriate
-* Keep components small
-* Extract reusable UI into the shared package
-* Avoid deeply nested component trees
+- Functional components only
+- Prefer server components where appropriate
+- Keep components small
+- Extract reusable UI into the shared package
+- Avoid deeply nested component trees
 
 ---
 
@@ -164,11 +177,11 @@ Do not:
 
 Every endpoint must:
 
-* Validate input
-* Authorize requests
-* Return consistent JSON
-* Handle errors gracefully
-* Be documented in `API.md`
+- Validate input
+- Authorize requests
+- Return consistent JSON
+- Handle errors gracefully
+- Be documented in `API.md`
 
 ---
 
@@ -176,10 +189,10 @@ Every endpoint must:
 
 Schema changes must:
 
-* Use new migrations
-* Preserve existing data
-* Be reviewed before merging
-* Include rollback considerations where practical
+- Use new migrations
+- Preserve existing data
+- Be reviewed before merging
+- Include rollback considerations where practical
 
 Never modify an existing migration after it has been applied in shared environments.
 
@@ -189,9 +202,9 @@ Never modify an existing migration after it has been applied in shared environme
 
 Every feature should include the appropriate level of testing:
 
-* Unit tests
-* Integration tests
-* End-to-end tests (where applicable)
+- Unit tests — [Vitest](https://vitest.dev/), colocated with source (e.g. `packages/utils/src/index.test.ts`)
+- Integration tests
+- End-to-end tests (where applicable) — [Playwright](https://playwright.dev/), in `tests/e2e/`
 
 Before opening a pull request, ensure:
 
@@ -199,6 +212,7 @@ Before opening a pull request, ensure:
 pnpm lint
 pnpm typecheck
 pnpm test
+pnpm test:e2e
 pnpm build
 ```
 
@@ -210,11 +224,11 @@ complete successfully.
 
 Update documentation when:
 
-* APIs change
-* Database schema changes
-* User workflows change
-* Security requirements change
-* New environment variables are introduced
+- APIs change
+- Database schema changes
+- User workflows change
+- Security requirements change
+- New environment variables are introduced
 
 Documentation is part of the feature—not an afterthought.
 
@@ -224,11 +238,11 @@ Documentation is part of the feature—not an afterthought.
 
 UI contributions should:
 
-* Support keyboard navigation
-* Provide visible focus states
-* Include accessible labels
-* Maintain sufficient color contrast
-* Work in both light and dark mode
+- Support keyboard navigation
+- Provide visible focus states
+- Include accessible labels
+- Maintain sufficient color contrast
+- Work in both light and dark mode
 
 ---
 
@@ -236,11 +250,11 @@ UI contributions should:
 
 Before submitting:
 
-* No secrets committed
-* Inputs validated
-* Authorization enforced
-* Tenant isolation maintained
-* Sensitive data not logged
+- No secrets committed
+- Inputs validated
+- Authorization enforced
+- Tenant isolation maintained
+- Sensitive data not logged
 
 Refer to `SECURITY.md` for detailed guidance.
 
@@ -250,12 +264,12 @@ Refer to `SECURITY.md` for detailed guidance.
 
 Reviewers should verify:
 
-* Architecture consistency
-* Code readability
-* Test coverage
-* Performance impact
-* Security implications
-* Documentation updates
+- Architecture consistency
+- Code readability
+- Test coverage
+- Performance impact
+- Security implications
+- Documentation updates
 
 Pull requests may be returned for revision if these requirements are not met.
 
@@ -265,11 +279,11 @@ Pull requests may be returned for revision if these requirements are not met.
 
 When reporting a bug, include:
 
-* Environment
-* Steps to reproduce
-* Expected behavior
-* Actual behavior
-* Screenshots or logs (if applicable)
+- Environment
+- Steps to reproduce
+- Expected behavior
+- Actual behavior
+- Screenshots or logs (if applicable)
 
 Do not include passwords, API keys, or other sensitive information.
 
@@ -279,10 +293,10 @@ Do not include passwords, API keys, or other sensitive information.
 
 Feature requests should include:
 
-* Problem statement
-* Proposed solution
-* Expected user benefit
-* Possible alternatives
+- Problem statement
+- Proposed solution
+- Expected user benefit
+- Possible alternatives
 
 ---
 
@@ -290,12 +304,12 @@ Feature requests should include:
 
 A task is complete only when:
 
-* Code is implemented
-* Tests pass
-* Documentation is updated
-* Security requirements are met
-* Code review is approved
-* CI pipeline succeeds
+- Code is implemented
+- Tests pass
+- Documentation is updated
+- Security requirements are met
+- Code review is approved
+- CI pipeline succeeds
 
 Only then is the feature ready to merge.
 

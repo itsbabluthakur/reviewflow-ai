@@ -4,7 +4,7 @@
 
 **Version:** 1.0
 
-This document records the foundational technical decisions behind ReviewFlow AI: the context that motivated each choice, the decision itself, and its consequences. It complements [`ARCHITECTURE.md`](ARCHITECTURE.md) (the system design) by explaining *why*, not just *what*. Topic-specific ADRs that come later belong in [`docs/architecture/`](docs/architecture/README.md); this file holds the decisions the project was founded on.
+This document records the foundational technical decisions behind ReviewFlow AI: the context that motivated each choice, the decision itself, and its consequences. It complements [`ARCHITECTURE.md`](ARCHITECTURE.md) (the system design) by explaining _why_, not just _what_. Topic-specific ADRs that come later belong in [`docs/architecture/`](docs/architecture/README.md); this file holds the decisions the project was founded on.
 
 ---
 
@@ -20,9 +20,9 @@ Use Next.js 15 (App Router) as the primary application framework, per [`CLAUDE.m
 
 **Consequences**
 
-* Server Components and Route Handlers let UI and API logic live in one codebase, reducing coordination overhead for a small team.
-* First-class Vercel deployment support matches the deployment strategy in `ARCHITECTURE.md` section 19.
-* Ties the frontend to the React/Next.js release cadence and its App Router conventions; migrating away later would touch every page.
+- Server Components and Route Handlers let UI and API logic live in one codebase, reducing coordination overhead for a small team.
+- First-class Vercel deployment support matches the deployment strategy in `ARCHITECTURE.md` section 19.
+- Ties the frontend to the React/Next.js release cadence and its App Router conventions; migrating away later would touch every page.
 
 ---
 
@@ -38,9 +38,9 @@ Use Supabase as the primary backend platform (Auth, Postgres, Storage), per `ARC
 
 **Consequences**
 
-* Row Level Security (`SECURITY.md` section 6) becomes the primary tenant-isolation mechanism, which the team must design carefully rather than relying solely on application-layer checks.
-* Managed Auth removes the need to build password hashing, session handling, and OAuth flows from scratch.
-* Introduces a dependency on Supabase's hosted platform and its migration/CLI tooling for schema management.
+- Row Level Security (`SECURITY.md` section 6) becomes the primary tenant-isolation mechanism, which the team must design carefully rather than relying solely on application-layer checks.
+- Managed Auth removes the need to build password hashing, session handling, and OAuth flows from scratch.
+- Introduces a dependency on Supabase's hosted platform and its migration/CLI tooling for schema management.
 
 ---
 
@@ -56,9 +56,9 @@ Use PostgreSQL as the sole system of record, per `DATABASE.md` section 1.
 
 **Consequences**
 
-* Foreign keys, constraints, and RLS give strong data-integrity guarantees without extra application code.
-* Relational modeling requires deliberate schema design up front (see `DATABASE.md` for the full table catalog) rather than ad-hoc document shapes.
-* Comes bundled with the choice of Supabase, which hosts and manages Postgres for us.
+- Foreign keys, constraints, and RLS give strong data-integrity guarantees without extra application code.
+- Relational modeling requires deliberate schema design up front (see `DATABASE.md` for the full table catalog) rather than ad-hoc document shapes.
+- Comes bundled with the choice of Supabase, which hosts and manages Postgres for us.
 
 ---
 
@@ -74,9 +74,9 @@ Use Drizzle ORM as the query layer over PostgreSQL, per `DATABASE.md` (header) a
 
 **Consequences**
 
-* Query shapes stay close to SQL, making performance easy to reason about and debug.
-* Migrations are explicit and reviewable, aligning with the "never edit an applied migration" rule in `DATABASE.md` section 19.
-* Smaller ecosystem and fewer implicit conveniences than a full-featured ORM like Prisma; the team accepts writing slightly more explicit code in exchange for transparency.
+- Query shapes stay close to SQL, making performance easy to reason about and debug.
+- Migrations are explicit and reviewable, aligning with the "never edit an applied migration" rule in `DATABASE.md` section 19.
+- Smaller ecosystem and fewer implicit conveniences than a full-featured ORM like Prisma; the team accepts writing slightly more explicit code in exchange for transparency.
 
 ---
 
@@ -92,9 +92,9 @@ Use Turborepo with pnpm workspaces to orchestrate builds, linting, type checking
 
 **Consequences**
 
-* Task caching and dependency-aware task graphs keep CI (`ci.yml`) fast as the monorepo grows.
-* Every package needs consistent script names (`dev`, `build`, `lint`, `typecheck`, `test`) so Turborepo's task graph can find them.
-* Adds a build-orchestration layer that contributors need to understand, on top of pnpm itself.
+- Task caching and dependency-aware task graphs keep CI (`ci.yml`) fast as the monorepo grows.
+- Every package needs consistent script names (`dev`, `build`, `lint`, `typecheck`, `test`) so Turborepo's task graph can find them.
+- Adds a build-orchestration layer that contributors need to understand, on top of pnpm itself.
 
 ---
 
@@ -110,9 +110,9 @@ Use shadcn/ui (Radix primitives + Tailwind CSS) as the base component layer, per
 
 **Consequences**
 
-* Components are copied into `packages/ui` rather than installed as an opaque dependency, so the team owns and can freely customize every component.
-* Radix primitives provide accessibility (focus management, keyboard nav, ARIA) out of the box, supporting `UI_GUIDELINES.md` section 22.
-* Requires the team to keep components up to date manually rather than via a simple version bump.
+- Components are copied into `packages/ui` rather than installed as an opaque dependency, so the team owns and can freely customize every component.
+- Radix primitives provide accessibility (focus management, keyboard nav, ARIA) out of the box, supporting `UI_GUIDELINES.md` section 22.
+- Requires the team to keep components up to date manually rather than via a simple version bump.
 
 ---
 
@@ -128,9 +128,9 @@ Build a modular monolith with clear service boundaries (Customer, Review, Campai
 
 **Consequences**
 
-* One deployable unit keeps operations simple during the MVP phase (single build, single deploy, no distributed-transaction concerns).
-* Enforced service/repository layering (`ARCHITECTURE.md` section 4) means a future extraction into standalone services is a refactor, not a rewrite, provided the boundaries are respected.
-* Requires discipline: without enforced boundaries, a modular monolith can quietly become a tangled monolith. Code review must check for cross-module leakage (`CONTRIBUTING.md`, Code Review Checklist).
+- One deployable unit keeps operations simple during the MVP phase (single build, single deploy, no distributed-transaction concerns).
+- Enforced service/repository layering (`ARCHITECTURE.md` section 4) means a future extraction into standalone services is a refactor, not a rewrite, provided the boundaries are respected.
+- Requires discipline: without enforced boundaries, a modular monolith can quietly become a tangled monolith. Code review must check for cross-module leakage (`CONTRIBUTING.md`, Code Review Checklist).
 
 ---
 
@@ -146,9 +146,28 @@ Use a versioned REST API (`/api/v1`) as the official contract, per `API.md` sect
 
 **Consequences**
 
-* Well-understood conventions (status codes, pagination, filtering) mean less onboarding time for new contributors and third-party integrators.
-* Versioning (`/api/v1`, future `/api/v2`) gives a clear deprecation path as the API evolves, per `API.md` (Base URL).
-* Less flexible for clients needing to shape responses precisely (a tradeoff GraphQL would address); acceptable given the API's primary consumer is the first-party web app.
+- Well-understood conventions (status codes, pagination, filtering) mean less onboarding time for new contributors and third-party integrators.
+- Versioning (`/api/v1`, future `/api/v2`) gives a clear deprecation path as the API evolves, per `API.md` (Base URL).
+- Less flexible for clients needing to shape responses precisely (a tradeoff GraphQL would address); acceptable given the API's primary consumer is the first-party web app.
+
+---
+
+## ADR-0009: Why `packages/*` are composite TypeScript projects but `apps/web` is not
+
+**Context**
+
+Root-level TypeScript project references require every referenced project to set `"composite": true`. The natural instinct is to reference every workspace — `apps/web` included — from a root `tsconfig.json`.
+
+**Decision**
+
+Root [`tsconfig.json`](tsconfig.json) references only the four shared packages (`types`, `utils`, `config`, `ui`), each with `composite: true`, `declaration: true`, and its own `src`/`dist` split. `apps/web` deliberately keeps its Next.js-generated tsconfig (`noEmit: true`, no `composite`) and is excluded from the root reference graph.
+
+**Consequences**
+
+- Verified empirically: setting `composite: true` on `apps/web/tsconfig.json` makes `next build` succeed but print `⚠ TypeScript project references are not fully supported. Attempting to build in incremental mode.` — a known Next.js limitation, not a misconfiguration. Excluding the app from the composite graph keeps the production build warning-free.
+- The four packages still gain a real, working project-reference graph — verified with `tsc --build tsconfig.json`, which builds all four in dependency order and emits `dist/*.d.ts`.
+- `apps/web` continues to consume all four packages as plain TypeScript source (via `transpilePackages` in `next.config.ts`), unaffected by whether they're composite — composite/`dist` output is not on the app's actual build or dev path today.
+- Packages intentionally do **not** reference each other in their own `tsconfig.json` (e.g. `ui` does not declare a TS reference on `utils`, even though it depends on it at the package.json level): TypeScript's project-reference resolution requires a referenced composite project's `dist` output to already exist and be current (error `TS6305` otherwise), which would make `typecheck` depend on a prior `build` — exactly the coupling this monorepo's Turborepo task graph (`turbo.json`) deliberately avoids for `lint`/`typecheck`.
 
 ---
 

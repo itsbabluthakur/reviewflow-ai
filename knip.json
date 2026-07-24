@@ -1,0 +1,12 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "workspaces": {
+    "apps/web": {},
+    "packages/*": {}
+  },
+  "ignoreDependencies": [
+    // Consumed via `next/core-web-vitals` in the root eslint.config.mjs
+    // (resolved through FlatCompat, not a direct import knip can trace).
+    "eslint-config-next"
+  ]
+}

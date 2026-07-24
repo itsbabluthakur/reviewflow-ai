@@ -7,6 +7,9 @@
   "ignoreDependencies": [
     // Consumed via `next/core-web-vitals` in the root eslint.config.mjs
     // (resolved through FlatCompat, not a direct import knip can trace).
-    "eslint-config-next"
+    "eslint-config-next",
+    // Loaded dynamically by pino via a string transport target
+    // ("pino-pretty"), not a static import knip can trace.
+    "pino-pretty"
   ]
 }

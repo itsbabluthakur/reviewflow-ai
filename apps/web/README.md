@@ -35,4 +35,4 @@ src/
 
 ## Shared packages
 
-This app consumes `@reviewflow/ui`, `@reviewflow/config`, `@reviewflow/types`, and `@reviewflow/utils` as workspace dependencies (see root [`next.config.ts`](./next.config.ts) `transpilePackages`). See [`packages/README.md`](../../packages/README.md) for what belongs in each.
+This app consumes `@reviewflow/{ui,config,types,utils,database,logger,errors,supabase}` as workspace dependencies (see [`next.config.mjs`](./next.config.mjs) `transpilePackages`). See [`packages/README.md`](../../packages/README.md) for what belongs in each.

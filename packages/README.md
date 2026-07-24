@@ -14,7 +14,10 @@ Each package should do one thing, expose a small typed public API (via `src/inde
 packages/
   ui/           # Shared design-system components (buttons, forms, tables, etc.)
   auth/         # Auth helpers: session handling, tenant/permission checks
-  database/     # Drizzle schema, client, and repository/query helpers
+  database/     # Drizzle schema, client, migration/seed runners, repository infrastructure
+  supabase/     # Supabase platform SDK client factories (browser/server/admin)
+  logger/       # Structured logging (Pino) and request-context propagation
+  errors/       # Shared error hierarchy and API response helpers
   validation/   # Shared Zod (or equivalent) schemas for forms and API payloads
   config/       # Shared runtime configuration and environment parsing
   types/        # Shared TypeScript types/interfaces used across apps and packages

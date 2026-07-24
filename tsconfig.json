@@ -5,6 +5,10 @@
     { "path": "packages/types" },
     { "path": "packages/utils" },
     { "path": "packages/config" },
-    { "path": "packages/ui" }
+    { "path": "packages/ui" },
+    { "path": "packages/errors" },
+    { "path": "packages/logger" },
+    { "path": "packages/database" },
+    { "path": "packages/supabase" }
   ]
 }

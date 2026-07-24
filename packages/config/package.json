@@ -19,6 +19,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@reviewflow/errors": "workspace:*",
     "zod": "^4.4.3"
   }
 }

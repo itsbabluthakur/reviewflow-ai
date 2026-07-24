@@ -12,14 +12,14 @@
 
 # 1. Database Design Principles
 
-* UUID primary keys for all business entities.
-* Every business record belongs to a tenant.
-* UTC timestamps.
-* Foreign keys enforced.
-* Soft deletes only where required.
-* Audit important actions.
-* Index frequently queried columns.
-* Row Level Security (RLS) enabled on tenant-owned tables.
+- UUID primary keys for all business entities.
+- Every business record belongs to a tenant.
+- UTC timestamps.
+- Foreign keys enforced.
+- Soft deletes only where required.
+- Audit important actions.
+- Index frequently queried columns.
+- Row Level Security (RLS) enabled on tenant-owned tables.
 
 ---
 
@@ -37,6 +37,22 @@ Every request must execute within a tenant context.
 
 ---
 
+# 2a. Implementation Status
+
+The ORM/connection layer described by this document is implemented in [`packages/database`](packages/README.md) (see [ADR-0002](docs/architecture/0002-database-and-migrations.md) for the driver/migration-ownership decisions): a Drizzle client (`getDb`), a migration runner and idempotent seed runner (`pnpm db:generate` / `db:migrate` / `db:seed`), and generic repository infrastructure (`BaseRepository`, `withTransaction`, pagination helpers) that a domain repository extends rather than reimplements.
+
+The infrastructure-only `_infra_probe` proof-point table (Sprint 2) has been removed now that real tables exist to serve that purpose (see [ADR-0004](docs/architecture/0004-first-domain-schema.md)).
+
+Three tables are implemented today — `users`, `agencies`, and `memberships` — with `UserRepository`, `AgencyRepository`, and `MembershipRepository` (each extending `BaseRepository`) providing infrastructure-only query methods (`findByEmail`, `findBySlug`, `findMembers`, `findUserAgencies`, `findByAgencyAndUser`). Their actual columns are intentionally a minimal first slice, not yet the full column sets shown in section 3 below:
+
+- `users`: `id`, `email` (unique), `full_name`, `avatar_url` (nullable), `created_at`, `updated_at`. No `auth_user_id`, `phone`, `status`, or `last_login_at` yet — those arrive with Supabase Auth wiring (ROADMAP.md Phase 1).
+- `agencies`: `id`, `name`, `slug` (unique), `logo_url` (nullable), `timezone`, `created_at`, `updated_at`. No `website`, `currency`, or `status` yet.
+- `memberships`: `id`, `agency_id` (FK → `agencies`), `user_id` (FK → `users`), `role` (enum: `owner` | `admin` | `member`), `created_at`. Unique on (`agency_id`, `user_id`) — one membership per user per agency. This is a minimal role label, not the full RBAC/permission-catalog model in sections 3 and 4 below (`roles`, `permissions`, `user_roles`) — see ARCHITECTURE.md section 7 for the target model.
+
+Every other table below (`businesses`, `locations`, `roles`, `permissions`, `customers`, `reviews`, …) does not exist yet.
+
+---
+
 # 3. Core Tables
 
 ## Identity & Access
@@ -47,22 +63,22 @@ Stores authenticated users.
 
 Columns
 
-* id (UUID)
-* auth_user_id
-* first_name
-* last_name
-* email
-* phone
-* avatar_url
-* status
-* last_login_at
-* created_at
-* updated_at
+- id (UUID)
+- auth_user_id
+- first_name
+- last_name
+- email
+- phone
+- avatar_url
+- status
+- last_login_at
+- created_at
+- updated_at
 
 Indexes
 
-* email
-* auth_user_id
+- email
+- auth_user_id
 
 ---
 
@@ -72,16 +88,16 @@ Agency accounts.
 
 Columns
 
-* id
-* name
-* slug
-* logo_url
-* website
-* timezone
-* currency
-* status
-* created_at
-* updated_at
+- id
+- name
+- slug
+- logo_url
+- website
+- timezone
+- currency
+- status
+- created_at
+- updated_at
 
 ---
 
@@ -91,18 +107,18 @@ Business profiles.
 
 Columns
 
-* id
-* agency_id
-* name
-* legal_name
-* business_type
-* website
-* phone
-* email
-* timezone
-* status
-* created_at
-* updated_at
+- id
+- agency_id
+- name
+- legal_name
+- business_type
+- website
+- phone
+- email
+- timezone
+- status
+- created_at
+- updated_at
 
 ---
 
@@ -112,19 +128,19 @@ Business locations.
 
 Columns
 
-* id
-* business_id
-* name
-* address
-* city
-* state
-* postal_code
-* country
-* latitude
-* longitude
-* google_location_id
-* created_at
-* updated_at
+- id
+- business_id
+- name
+- address
+- city
+- state
+- postal_code
+- country
+- latitude
+- longitude
+- google_location_id
+- created_at
+- updated_at
 
 ---
 
@@ -134,12 +150,12 @@ System roles.
 
 Examples
 
-* Super Admin
-* Agency Owner
-* Agency Staff
-* Business Owner
-* Manager
-* Employee
+- Super Admin
+- Agency Owner
+- Agency Staff
+- Business Owner
+- Manager
+- Employee
 
 ---
 
@@ -149,11 +165,11 @@ Permission catalog.
 
 Examples
 
-* customer.read
-* customer.write
-* review.reply
-* billing.manage
-* campaign.manage
+- customer.read
+- customer.write
+- review.reply
+- billing.manage
+- campaign.manage
 
 ---
 
@@ -169,18 +185,18 @@ Maps users to roles within a tenant.
 
 Columns
 
-* id
-* location_id
-* first_name
-* last_name
-* email
-* phone
-* preferred_channel
-* tags
-* notes
-* status
-* created_at
-* updated_at
+- id
+- location_id
+- first_name
+- last_name
+- email
+- phone
+- preferred_channel
+- tags
+- notes
+- status
+- created_at
+- updated_at
 
 ---
 
@@ -202,10 +218,10 @@ Timeline of customer events.
 
 Examples
 
-* Created
-* Imported
-* Review Requested
-* Review Submitted
+- Created
+- Imported
+- Review Requested
+- Review Submitted
 
 ---
 
@@ -217,16 +233,16 @@ Tracks every review request.
 
 Columns
 
-* id
-* customer_id
-* campaign_id
-* channel
-* status
-* review_url
-* sent_at
-* opened_at
-* clicked_at
-* completed_at
+- id
+- customer_id
+- campaign_id
+- channel
+- status
+- review_url
+- sent_at
+- opened_at
+- clicked_at
+- completed_at
 
 ---
 
@@ -236,16 +252,16 @@ Imported Google reviews.
 
 Columns
 
-* id
-* location_id
-* external_review_id
-* rating
-* reviewer_name
-* review_text
-* review_date
-* language
-* sentiment
-* synced_at
+- id
+- location_id
+- external_review_id
+- rating
+- reviewer_name
+- review_text
+- review_date
+- language
+- sentiment
+- synced_at
 
 ---
 
@@ -255,11 +271,11 @@ Stores replies.
 
 Columns
 
-* id
-* review_id
-* reply_text
-* source (manual or AI)
-* published_at
+- id
+- review_id
+- reply_text
+- source (manual or AI)
+- published_at
 
 ---
 
@@ -277,13 +293,13 @@ Workflow definition.
 
 Supported step types
 
-* Trigger
-* Delay
-* Condition
-* Email
-* SMS
-* WhatsApp
-* End
+- Trigger
+- Delay
+- Condition
+- Email
+- SMS
+- WhatsApp
+- End
 
 ---
 
@@ -309,13 +325,13 @@ Detailed event log.
 
 Shared fields
 
-* recipient
-* template
-* provider
-* status
-* sent_at
-* delivered_at
-* failed_reason
+- recipient
+- template
+- provider
+- status
+- sent_at
+- delivered_at
+- failed_reason
 
 ---
 
@@ -325,11 +341,11 @@ Reusable templates.
 
 Fields
 
-* type
-* subject
-* body
-* variables
-* version
+- type
+- subject
+- body
+- variables
+- version
 
 ---
 
@@ -353,10 +369,10 @@ Synchronization history.
 
 Track
 
-* started_at
-* finished_at
-* records_synced
-* errors
+- started_at
+- finished_at
+- records_synced
+- errors
 
 ---
 
@@ -366,12 +382,12 @@ Track
 
 Columns
 
-* id
-* location_id
-* name
-* destination_url
-* design
-* created_at
+- id
+- location_id
+- name
+- destination_url
+- design
+- created_at
 
 ---
 
@@ -381,11 +397,11 @@ Tracks every scan.
 
 Fields
 
-* scanned_at
-* device
-* browser
-* country
-* referrer
+- scanned_at
+- device
+- browser
+- country
+- referrer
 
 ---
 
@@ -409,10 +425,10 @@ Tracks usage by tenant.
 
 Metrics
 
-* tokens
-* model
-* latency
-* estimated_cost
+- tokens
+- model
+- latency
+- estimated_cost
 
 ---
 
@@ -488,11 +504,11 @@ User preferences.
 
 Track
 
-* login
-* updates
-* deletes
-* exports
-* billing actions
+- login
+- updates
+- deletes
+- exports
+- billing actions
 
 ---
 
@@ -559,15 +575,15 @@ Campaigns
 
 Index:
 
-* email
-* phone
-* status
-* created_at
-* business_id
-* location_id
-* campaign_id
-* customer_id
-* review_date
+- email
+- phone
+- status
+- created_at
+- business_id
+- location_id
+- campaign_id
+- customer_id
+- review_date
 
 Composite indexes should be added for common filtering combinations after measuring query performance.
 
@@ -579,10 +595,10 @@ Enable RLS on all tenant-owned tables.
 
 Policy goals:
 
-* Users only access data within their tenant.
-* Business owners cannot access another business.
-* Agency users only access assigned businesses.
-* Super Admin bypasses tenant restrictions through controlled server-side access.
+- Users only access data within their tenant.
+- Business owners cannot access another business.
+- Agency users only access assigned businesses.
+- Super Admin bypasses tenant restrictions through controlled server-side access.
 
 ---
 
@@ -590,11 +606,11 @@ Policy goals:
 
 Rules:
 
-* Never edit an existing migration.
-* Every schema change gets a new migration.
-* Backward-compatible changes first.
-* Test migrations on staging before production.
-* Seed scripts must be idempotent.
+- Never edit an existing migration.
+- Every schema change gets a new migration.
+- Backward-compatible changes first.
+- Test migrations on staging before production.
+- Seed scripts must be idempotent.
 
 ---
 
@@ -602,14 +618,14 @@ Rules:
 
 Schema is designed to support:
 
-* Multiple review platforms
-* Additional messaging providers
-* CRM features
-* Appointment booking
-* AI agents
-* Mobile applications
-* Public API
-* Marketplace integrations
-* Advanced reporting
+- Multiple review platforms
+- Additional messaging providers
+- CRM features
+- Appointment booking
+- AI agents
+- Mobile applications
+- Public API
+- Marketplace integrations
+- Advanced reporting
 
 The schema should evolve through additive migrations whenever possible to minimize production risk.

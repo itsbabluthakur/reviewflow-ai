@@ -1,0 +1,1 @@
+DROP TABLE "_infra_probe" CASCADE;

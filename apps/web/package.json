@@ -12,6 +12,10 @@
   },
   "dependencies": {
     "@reviewflow/config": "workspace:*",
+    "@reviewflow/database": "workspace:*",
+    "@reviewflow/errors": "workspace:*",
+    "@reviewflow/logger": "workspace:*",
+    "@reviewflow/supabase": "workspace:*",
     "@reviewflow/types": "workspace:*",
     "@reviewflow/ui": "workspace:*",
     "@reviewflow/utils": "workspace:*",

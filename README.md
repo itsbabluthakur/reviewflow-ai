@@ -73,7 +73,14 @@ packages/
   ui/
   auth/
   database/
+  supabase/
+  logger/
+  errors/
+  config/
+  types/
+  utils/
   validation/
+  emails/
   shared/
 
 supabase/
@@ -160,6 +167,35 @@ pnpm dev
 - **Unit tests** use [Vitest](https://vitest.dev/). Package tests are colocated with source (e.g. `packages/utils/src/index.test.ts`); run with `pnpm test`.
 - **Smoke tests** use [Playwright](https://playwright.dev/) (`tests/e2e/`), covering that the home page renders and `GET /api/health` returns `200`. Run with `pnpm test:e2e` (builds and starts `apps/web` on port 3100 automatically).
 
+### Database
+
+`packages/database` (Drizzle ORM + postgres.js) owns the schema and connection; migration SQL is generated into `supabase/migrations`, not the package itself (see [ADR-0002](docs/architecture/0002-database-and-migrations.md)):
+
+```bash
+pnpm db:generate   # Diff packages/database/src/schema against supabase/migrations, write new SQL
+pnpm db:migrate    # Apply pending migrations
+pnpm db:seed       # Idempotent seed — safe to re-run
+```
+
+All three need `DATABASE_URL` set (see `.env.example`).
+
+The first domain schema — `users`, `agencies`, `memberships` — and their repositories (`UserRepository`, `AgencyRepository`, `MembershipRepository`) are implemented; see `DATABASE.md` section 2a and [ADR-0004](docs/architecture/0004-first-domain-schema.md).
+
+### Health & readiness
+
+- `GET /api/health` — static service identity (name, version).
+- `GET /api/live` — liveness: is the process up? No dependency checks.
+- `GET /api/ready` — readiness: verifies environment configuration and database connectivity, returning `503` (not `200`) if either fails.
+
+### Docker
+
+```bash
+docker build -f docker/Dockerfile.web -t reviewflow-web .
+docker run -p 3000:3000 -e DATABASE_URL=... reviewflow-web
+```
+
+Multi-stage build via `turbo prune`, non-root runtime user, `HEALTHCHECK` against `/api/live`. See `docker/README.md`.
+
 ---
 
 ## 📦 Scripts
@@ -175,6 +211,9 @@ pnpm format        # Format code
 pnpm deps:check    # Check dependency version consistency (syncpack)
 pnpm deps:fix      # Fix dependency version mismatches (syncpack)
 pnpm deps:unused   # Find unused dependencies/files/exports (knip)
+pnpm db:generate   # Generate a migration from the Drizzle schema
+pnpm db:migrate    # Apply pending migrations
+pnpm db:seed       # Run the idempotent seed script
 ```
 
 ---

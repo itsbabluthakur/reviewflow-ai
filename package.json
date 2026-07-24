@@ -21,6 +21,9 @@
     "deps:check": "syncpack lint",
     "deps:fix": "syncpack fix",
     "deps:unused": "knip",
+    "db:generate": "pnpm --filter @reviewflow/database run db:generate",
+    "db:migrate": "pnpm --filter @reviewflow/database run db:migrate",
+    "db:seed": "pnpm --filter @reviewflow/database run db:seed",
     "prepare": "husky"
   },
   "devDependencies": {

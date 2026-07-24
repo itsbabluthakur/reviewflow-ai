@@ -1,0 +1,36 @@
+# Dependencies (installed fresh inside the image)
+**/node_modules
+
+# Build output (rebuilt inside the image)
+**/.next
+**/dist
+**/.turbo
+**/tsconfig.tsbuildinfo
+
+# Test artifacts
+**/coverage
+**/test-results
+**/playwright-report
+**/playwright/.cache
+
+# Git
+.git
+.gitignore
+
+# Env files — never bake secrets into an image; pass at runtime instead
+.env
+.env.*
+!.env.example
+
+# Editor/OS
+.vscode
+.idea
+.DS_Store
+
+# Docs (not needed at runtime or to build)
+docs
+*.md
+!README.md
+
+# Local-only
+docker-compose.yml

@@ -12,15 +12,15 @@
 
 The platform must be:
 
-* Multi-tenant
-* Secure by default
-* Highly maintainable
-* Horizontally scalable
-* API-first
-* AI-ready
-* Cloud-native
-* Mobile-ready
-* White-label capable
+- Multi-tenant
+- Secure by default
+- Highly maintainable
+- Horizontally scalable
+- API-first
+- AI-ready
+- Cloud-native
+- Mobile-ready
+- White-label capable
 
 ---
 
@@ -69,12 +69,18 @@ packages/
   auth/
   api/
   database/
+  supabase/
+  logger/
+  errors/
   billing/
   ai/
   analytics/
   shared/
   config/
   types/
+  utils/
+  validation/
+  emails/
 
 supabase/
 scripts/
@@ -90,11 +96,11 @@ tests/
 
 Responsibilities:
 
-* UI
-* Forms
-* Tables
-* Charts
-* Layouts
+- UI
+- Forms
+- Tables
+- Charts
+- Layouts
 
 Must never contain business logic.
 
@@ -104,10 +110,10 @@ Must never contain business logic.
 
 Responsibilities:
 
-* Use cases
-* Validation
-* Authorization
-* Workflow orchestration
+- Use cases
+- Validation
+- Authorization
+- Workflow orchestration
 
 ---
 
@@ -115,11 +121,11 @@ Responsibilities:
 
 Responsibilities:
 
-* Customer management
-* Review requests
-* AI features
-* Billing
-* Analytics
+- Customer management
+- Review requests
+- AI features
+- Billing
+- Analytics
 
 Business rules belong here.
 
@@ -129,9 +135,9 @@ Business rules belong here.
 
 Responsibilities:
 
-* Database access
-* Query optimization
-* Transactions
+- Database access
+- Query optimization
+- Transactions
 
 No UI code.
 
@@ -141,10 +147,10 @@ No UI code.
 
 Responsibilities:
 
-* Storage
-* Constraints
-* Indexes
-* Row Level Security
+- Storage
+- Constraints
+- Indexes
+- Row Level Security
 
 ---
 
@@ -168,10 +174,10 @@ No cross-tenant access.
 
 Tenant isolation is enforced in:
 
-* Authentication
-* Authorization
-* Database policies
-* API layer
+- Authentication
+- Authorization
+- Database policies
+- API layer
 
 ---
 
@@ -202,12 +208,12 @@ Access Granted
 
 Roles:
 
-* Super Admin
-* Agency Owner
-* Agency Staff
-* Business Owner
-* Manager
-* Employee
+- Super Admin
+- Agency Owner
+- Agency Staff
+- Business Owner
+- Manager
+- Employee
 
 Every API endpoint must verify:
 
@@ -222,58 +228,58 @@ Every API endpoint must verify:
 
 ## Authentication
 
-* Login
-* Logout
-* Password reset
-* Google OAuth
-* Session management
+- Login
+- Logout
+- Password reset
+- Google OAuth
+- Session management
 
 ---
 
 ## Customer Module
 
-* CRUD
-* Import
-* Export
-* Search
-* Notes
-* Tags
+- CRUD
+- Import
+- Export
+- Search
+- Notes
+- Tags
 
 ---
 
 ## Review Module
 
-* Send requests
-* Track delivery
-* Sync reviews
-* AI reply drafts
+- Send requests
+- Track delivery
+- Sync reviews
+- AI reply drafts
 
 ---
 
 ## Campaign Module
 
-* Workflow builder
-* Scheduling
-* Automation history
+- Workflow builder
+- Scheduling
+- Automation history
 
 ---
 
 ## Billing Module
 
-* Stripe
-* Plans
-* Invoices
-* Trials
-* Webhooks
+- Stripe
+- Plans
+- Invoices
+- Trials
+- Webhooks
 
 ---
 
 ## Analytics Module
 
-* KPIs
-* Reports
-* Charts
-* Campaign performance
+- KPIs
+- Reports
+- Charts
+- Campaign performance
 
 ---
 
@@ -283,10 +289,10 @@ Every API endpoint must verify:
 
 Purpose:
 
-* Connect business accounts
-* Sync locations
-* Import reviews
-* Draft replies
+- Connect business accounts
+- Sync locations
+- Import reviews
+- Draft replies
 
 ---
 
@@ -294,9 +300,9 @@ Purpose:
 
 Channels:
 
-* Email
-* SMS
-* WhatsApp
+- Email
+- SMS
+- WhatsApp
 
 Delivery status stored in database.
 
@@ -306,10 +312,10 @@ Delivery status stored in database.
 
 OpenAI provides:
 
-* Review replies
-* Sentiment analysis
-* Weekly summaries
-* Monthly reports
+- Review replies
+- Sentiment analysis
+- Weekly summaries
+- Monthly reports
 
 AI responses are always reviewed by the user before publishing.
 
@@ -319,17 +325,17 @@ AI responses are always reviewed by the user before publishing.
 
 Use background processing for:
 
-* Sending campaigns
-* Import jobs
-* Review synchronization
-* Scheduled reports
-* Analytics generation
+- Sending campaigns
+- Import jobs
+- Review synchronization
+- Scheduled reports
+- Analytics generation
 
 Jobs must be:
 
-* Retryable
-* Logged
-* Idempotent where possible
+- Retryable
+- Logged
+- Idempotent where possible
 
 ---
 
@@ -339,24 +345,24 @@ REST-first architecture.
 
 Conventions:
 
-* Versioned endpoints (`/api/v1`)
-* JSON responses
-* Standard error format
-* Pagination
-* Filtering
-* Sorting
-* Rate limiting
+- Versioned endpoints (`/api/v1`)
+- JSON responses
+- Standard error format
+- Pagination
+- Filtering
+- Sorting
+- Rate limiting
 
 ---
 
 # 12. Database Design Principles
 
-* UUID primary keys
-* Foreign keys enforced
-* Index frequently queried columns
-* Soft deletes only where justified
-* Audit important actions
-* Store timestamps in UTC
+- UUID primary keys
+- Foreign keys enforced
+- Index frequently queried columns
+- Soft deletes only where justified
+- Audit important actions
+- Store timestamps in UTC
 
 ---
 
@@ -364,10 +370,10 @@ Conventions:
 
 Use Supabase Storage for:
 
-* Logos
-* QR code assets
-* User uploads
-* Exported reports
+- Logos
+- QR code assets
+- User uploads
+- Exported reports
 
 Never store files in the application container.
 
@@ -377,10 +383,10 @@ Never store files in the application container.
 
 Cache:
 
-* Dashboard metrics
-* Analytics
-* Business settings
-* Public widgets
+- Dashboard metrics
+- Analytics
+- Business settings
+- Public widgets
 
 Invalidate cache on data changes.
 
@@ -390,10 +396,12 @@ Invalidate cache on data changes.
 
 Every service must:
 
-* Log unexpected errors
-* Return typed errors
-* Avoid exposing internal details
-* Include correlation/request IDs for debugging
+- Log unexpected errors
+- Return typed errors
+- Avoid exposing internal details
+- Include correlation/request IDs for debugging
+
+Implemented by `packages/errors` (`AppError` and its `ValidationError`/`ConfigurationError`/`DatabaseError` subclasses, plus `toApiErrorResponse`/`toApiSuccessResponse` matching the envelope in `API.md` section 3) and `packages/logger`'s request-context binding — see [ADR-0003](docs/architecture/0003-observability-and-error-handling.md).
 
 ---
 
@@ -401,16 +409,16 @@ Every service must:
 
 Mandatory protections:
 
-* Row Level Security
-* RBAC
-* HTTPS only
-* Secure cookies
-* Input validation
-* Output sanitization
-* CSRF protection
-* XSS prevention
-* SQL injection prevention
-* Audit logging
+- Row Level Security
+- RBAC
+- HTTPS only
+- Secure cookies
+- Input validation
+- Output sanitization
+- CSRF protection
+- XSS prevention
+- SQL injection prevention
+- Audit logging
 
 ---
 
@@ -418,18 +426,20 @@ Mandatory protections:
 
 Monitoring:
 
-* Sentry
-* PostHog
-* Structured application logs
-* Health endpoints
-* Error alerts
+- Sentry
+- PostHog
+- Structured application logs
+- Health endpoints
+- Error alerts
+
+Structured logging (`packages/logger`, Pino) and health/liveness/readiness endpoints (`GET /api/health`, `/api/live`, `/api/ready`) are implemented; Sentry, PostHog, and error alerting are not yet — see `ROADMAP.md` Phase 15.
 
 Track:
 
-* API latency
-* Failed requests
-* Queue failures
-* Authentication failures
+- API latency
+- Failed requests
+- Queue failures
+- Authentication failures
 
 ---
 
@@ -437,16 +447,16 @@ Track:
 
 MVP:
 
-* Modular monolith
+- Modular monolith
 
 Future:
 
-* Extract services if required:
+- Extract services if required:
 
-  * AI Service
-  * Notification Service
-  * Billing Service
-  * Analytics Service
+  - AI Service
+  - Notification Service
+  - Billing Service
+  - Analytics Service
 
 Avoid premature microservices.
 
@@ -456,17 +466,17 @@ Avoid premature microservices.
 
 Primary:
 
-* Vercel
-* Supabase
-* Cloudflare
+- Vercel
+- Supabase
+- Cloudflare
 
 CI/CD:
 
-* GitHub Actions
-* Automated tests
-* Lint
-* Type checking
-* Preview deployments
+- GitHub Actions
+- Automated tests
+- Lint
+- Type checking
+- Preview deployments
 
 ---
 
@@ -474,12 +484,12 @@ CI/CD:
 
 Every new feature must:
 
-* Follow CLAUDE.md
-* Respect tenant isolation
-* Include tests
-* Update documentation
-* Be production-ready
-* Avoid breaking existing APIs
-* Be reviewed for security and performance
+- Follow CLAUDE.md
+- Respect tenant isolation
+- Include tests
+- Update documentation
+- Be production-ready
+- Avoid breaking existing APIs
+- Be reviewed for security and performance
 
 This architecture document is the authoritative technical reference for all future development.

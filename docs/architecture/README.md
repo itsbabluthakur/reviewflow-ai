@@ -39,5 +39,8 @@ What becomes easier or harder as a result?
 ## Recorded ADRs
 
 - [ADR-0001: Developer workflow tooling](0001-developer-workflow-tooling.md)
+- [ADR-0002: Database client, ORM driver, and migration ownership](0002-database-and-migrations.md)
+- [ADR-0003: Structured logging, error hierarchy, and request context](0003-observability-and-error-handling.md)
+- [ADR-0004: First domain schema (users, agencies, memberships) and its repositories](0004-first-domain-schema.md)
 
 The initial set of foundational, project-wide decisions is documented separately in [`DECISIONS.md`](../../DECISIONS.md).

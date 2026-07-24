@@ -166,7 +166,7 @@ Root [`tsconfig.json`](tsconfig.json) references only the four shared packages (
 
 - Verified empirically: setting `composite: true` on `apps/web/tsconfig.json` makes `next build` succeed but print `⚠ TypeScript project references are not fully supported. Attempting to build in incremental mode.` — a known Next.js limitation, not a misconfiguration. Excluding the app from the composite graph keeps the production build warning-free.
 - The four packages still gain a real, working project-reference graph — verified with `tsc --build tsconfig.json`, which builds all four in dependency order and emits `dist/*.d.ts`.
-- `apps/web` continues to consume all four packages as plain TypeScript source (via `transpilePackages` in `next.config.ts`), unaffected by whether they're composite — composite/`dist` output is not on the app's actual build or dev path today.
+- `apps/web` continues to consume all four packages as plain TypeScript source (via `transpilePackages` in `next.config.mjs`), unaffected by whether they're composite — composite/`dist` output is not on the app's actual build or dev path today.
 - Packages intentionally do **not** reference each other in their own `tsconfig.json` (e.g. `ui` does not declare a TS reference on `utils`, even though it depends on it at the package.json level): TypeScript's project-reference resolution requires a referenced composite project's `dist` output to already exist and be current (error `TS6305` otherwise), which would make `typecheck` depend on a prior `build` — exactly the coupling this monorepo's Turborepo task graph (`turbo.json`) deliberately avoids for `lint`/`typecheck`.
 
 ---

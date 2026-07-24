@@ -1,0 +1,30 @@
+{
+  "name": "@reviewflow/supabase",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Browser, server, and admin Supabase client factories for ReviewFlow AI apps.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "clean": "rimraf .turbo dist node_modules"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "eslint": "^9",
+    "typescript": "^5",
+    "vitest": "^4.1.10"
+  },
+  "dependencies": {
+    "@reviewflow/config": "workspace:*",
+    "@reviewflow/errors": "workspace:*",
+    "@supabase/ssr": "^0.12.3",
+    "@supabase/supabase-js": "^2.110.8",
+    "zod": "^4.4.3"
+  }
+}

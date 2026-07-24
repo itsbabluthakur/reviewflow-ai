@@ -1,4 +1,7 @@
+import { ConfigurationError } from "@reviewflow/errors";
+
 export { loadEnv, resetEnvCache, type Env } from "./env";
+export { parseEnv } from "./parse-env";
 
 /**
  * Read an environment variable, falling back to `fallback` if unset.
@@ -13,7 +16,9 @@ export function getEnv(key: string, fallback?: string): string {
   if (fallback !== undefined) {
     return fallback;
   }
-  throw new Error(`Missing required environment variable: ${key}`);
+  throw new ConfigurationError(`Missing required environment variable: ${key}`, {
+    context: { key },
+  });
 }
 
 export const isProduction = process.env.NODE_ENV === "production";

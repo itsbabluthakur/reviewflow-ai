@@ -1,0 +1,17 @@
+# Local development services that are NOT already provided by the Supabase CLI.
+#
+# The primary local stack (Postgres, Auth, Storage, Realtime) is managed by
+# `supabase start` (see supabase/README.md), not this file, to avoid running
+# two divergent Postgres instances locally.
+#
+# Usage:
+#   docker compose up -d
+
+services:
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: reviewflow-mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025" # SMTP server, point local email sending (e.g. Resend dev mode) here
+      - "8025:8025" # Web UI at http://localhost:8025 to inspect sent emails

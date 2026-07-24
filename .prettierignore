@@ -1,0 +1,21 @@
+# Dependencies
+node_modules
+
+# Build output
+.next
+dist
+build
+out
+
+# Turborepo
+.turbo
+
+# Coverage
+coverage
+
+# Package manager
+pnpm-lock.yaml
+
+# Supabase local state
+supabase/.branches
+supabase/.temp

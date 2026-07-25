@@ -1,11 +1,10 @@
 import { eq } from "drizzle-orm";
-import type { Database } from "../client";
 import { agencies } from "../schema";
-import { BaseRepository } from "./base-repository";
+import { BaseRepository, type Queryable } from "./base-repository";
 
 /** Infrastructure-only data access for `agencies`. No business logic. */
 export class AgencyRepository extends BaseRepository<typeof agencies> {
-  constructor(db: Database) {
+  constructor(db: Queryable) {
     super(db, agencies, agencies.id);
   }
 

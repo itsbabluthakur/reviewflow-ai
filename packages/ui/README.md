@@ -40,3 +40,7 @@ Then, from the repository root:
 4. Add any new dependency the component needs (e.g. a `radix-ui` primitive) to this package's `package.json`, not `apps/web`'s.
 
 See [`components.json`](../../apps/web/components.json) for the shadcn/ui configuration (aliases, style, base color) used during generation.
+
+## Design notes
+
+- **Mark a component `"use client"` if it (even transitively) uses a Radix primitive that calls a React hook or `createContext` at module scope** — not just if _your_ code uses hooks. `@radix-ui/react-slot` (used by `Button`'s `asChild`) calls `React.createContext()` unconditionally on import, which crashes if a Server Component ends up importing it without a client boundary in between. This actually happened (see [ADR-0006](../../docs/architecture/0006-application-shell.md)) — `Button` had no `"use client"` and built fine until the first Server Component rendered it with `asChild`. `Card`/`Input`/`Skeleton` correctly have none, since they're plain elements with no Radix dependency.

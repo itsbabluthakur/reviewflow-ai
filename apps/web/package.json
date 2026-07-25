@@ -8,9 +8,11 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "clean": "rimraf .next .turbo dist node_modules"
   },
   "dependencies": {
+    "@reviewflow/auth": "workspace:*",
     "@reviewflow/config": "workspace:*",
     "@reviewflow/database": "workspace:*",
     "@reviewflow/errors": "workspace:*",
@@ -19,6 +21,9 @@
     "@reviewflow/types": "workspace:*",
     "@reviewflow/ui": "workspace:*",
     "@reviewflow/utils": "workspace:*",
+    "@reviewflow/validation": "workspace:*",
+    "class-variance-authority": "^0.7.1",
+    "lucide-react": "^0.468.0",
     "next": "15.5.21",
     "react": "^19",
     "react-dom": "^19",
@@ -26,13 +31,19 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.0.4",
     "eslint": "^9",
     "eslint-config-next": "15.5.21",
+    "jsdom": "^25.0.1",
     "shadcn": "^4.14.1",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.10"
   }
 }

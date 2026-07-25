@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   AppError,
+  AuthenticationError,
+  AuthorizationError,
   ConfigurationError,
   DatabaseError,
   ValidationError,
@@ -29,6 +31,21 @@ describe("error hierarchy", () => {
     const error = new DatabaseError("Query failed.");
     expect(error.code).toBe("DATABASE_ERROR");
     expect(error.statusCode).toBe(500);
+  });
+
+  it("AuthenticationError has code AUTHENTICATION_ERROR and statusCode 401", () => {
+    const error = new AuthenticationError();
+    expect(error).toBeInstanceOf(AppError);
+    expect(error.code).toBe("AUTHENTICATION_ERROR");
+    expect(error.statusCode).toBe(401);
+    expect(error.message).toBe("Authentication required.");
+  });
+
+  it("AuthorizationError has code AUTHORIZATION_ERROR and statusCode 403", () => {
+    const error = new AuthorizationError();
+    expect(error).toBeInstanceOf(AppError);
+    expect(error.code).toBe("AUTHORIZATION_ERROR");
+    expect(error.statusCode).toBe(403);
   });
 
   it("carries context and cause through", () => {

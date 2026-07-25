@@ -9,6 +9,8 @@
     { "path": "packages/errors" },
     { "path": "packages/logger" },
     { "path": "packages/database" },
-    { "path": "packages/supabase" }
+    { "path": "packages/supabase" },
+    { "path": "packages/auth" },
+    { "path": "packages/validation" }
   ]
 }

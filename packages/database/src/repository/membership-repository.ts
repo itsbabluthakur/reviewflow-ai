@@ -1,11 +1,10 @@
 import { and, eq } from "drizzle-orm";
-import type { Database } from "../client";
 import { memberships } from "../schema";
-import { BaseRepository } from "./base-repository";
+import { BaseRepository, type Queryable } from "./base-repository";
 
 /** Infrastructure-only data access for `memberships`. No business logic. */
 export class MembershipRepository extends BaseRepository<typeof memberships> {
-  constructor(db: Database) {
+  constructor(db: Queryable) {
     super(db, memberships, memberships.id);
   }
 

@@ -9,6 +9,8 @@ const nextConfig = {
     "@reviewflow/logger",
     "@reviewflow/errors",
     "@reviewflow/supabase",
+    "@reviewflow/auth",
+    "@reviewflow/validation",
   ],
 };
 

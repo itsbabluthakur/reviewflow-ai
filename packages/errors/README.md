@@ -6,7 +6,7 @@ The shared error hierarchy and API response helpers used across ReviewFlow AI ap
 
 ## What belongs here
 
-- `AppError` and its subclasses (`ValidationError`, `ConfigurationError`, `DatabaseError`) — every deliberately thrown, typed error in the platform.
+- `AppError` and its subclasses (`ValidationError`, `ConfigurationError`, `DatabaseError`, `AuthenticationError`, `AuthorizationError`) — every deliberately thrown, typed error in the platform.
 - `toApiSuccessResponse` / `toApiErrorResponse` — builders for the standard response envelope defined in [`API.md`](../../API.md) section 3.
 - `serializeError` — normalizes any thrown value into a structured, log-friendly shape (stack traces included only outside production).
 
@@ -39,5 +39,6 @@ try {
 
 ## Design notes
 
+- `AuthenticationError` (401) means "we don't know who you are"; `AuthorizationError` (403) means "we know who you are, but you can't do this" (e.g. `@reviewflow/auth`'s `requireMembership` throws it when an authenticated user has no membership in the target agency). Don't conflate the two.
 - `isOperational` distinguishes anticipated, handled failures (bad input, missing config, a database call that failed) from unexpected programming bugs. All four error classes here default to `isOperational: true` — they represent known failure categories, not crashes.
 - `toApiErrorResponse` never reflects a non-`AppError`'s message back to the client (`INTERNAL_ERROR`, generic message) — per [`SECURITY.md`](../../SECURITY.md) section 9, unexpected error detail must not leak to callers.

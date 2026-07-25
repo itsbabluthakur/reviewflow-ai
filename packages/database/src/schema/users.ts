@@ -12,6 +12,12 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   fullName: text("full_name").notNull(),
   avatarUrl: text("avatar_url"),
+  // Supabase Auth's `auth.users.id` — nullable because the application user
+  // is the source of truth and can exist before any identity is linked to
+  // it (e.g. this sprint's seed data); unique so at most one application
+  // user maps to a given identity. `.unique()` also creates the required
+  // index — see ADR-0005.
+  authUserId: uuid("auth_user_id").unique(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });

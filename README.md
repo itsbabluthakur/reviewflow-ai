@@ -164,8 +164,8 @@ pnpm dev
 
 ### Testing
 
-- **Unit tests** use [Vitest](https://vitest.dev/). Package tests are colocated with source (e.g. `packages/utils/src/index.test.ts`); run with `pnpm test`.
-- **Smoke tests** use [Playwright](https://playwright.dev/) (`tests/e2e/`), covering that the home page renders and `GET /api/health` returns `200`. Run with `pnpm test:e2e` (builds and starts `apps/web` on port 3100 automatically).
+- **Unit tests** use [Vitest](https://vitest.dev/). Package tests are colocated with source (e.g. `packages/utils/src/index.test.ts`); run with `pnpm test`. `apps/web` additionally uses [Testing Library](https://testing-library.com/) + jsdom for component tests (`Sidebar`, `Navbar`, `UserMenu`, login/signup forms, Server Actions).
+- **E2e tests** use [Playwright](https://playwright.dev/) (`tests/e2e/`): the original infra smoke test, auth middleware/redirect behavior, and the application shell (public page rendering, 404, responsive layout, no console errors). Run with `pnpm test:e2e` (builds and starts `apps/web` on port 3100 automatically).
 
 ### Database
 
@@ -179,7 +179,27 @@ pnpm db:seed       # Idempotent seed — safe to re-run
 
 All three need `DATABASE_URL` set (see `.env.example`).
 
-The first domain schema — `users`, `agencies`, `memberships` — and their repositories (`UserRepository`, `AgencyRepository`, `MembershipRepository`) are implemented; see `DATABASE.md` section 2a and [ADR-0004](docs/architecture/0004-first-domain-schema.md).
+The first domain schema — `users`, `agencies`, `memberships` — and their repositories (`UserRepository`, `AgencyRepository`, `MembershipRepository`), plus a repository factory (`createRepositories(db)`), are implemented; see `DATABASE.md` section 2a and [ADR-0004](docs/architecture/0004-first-domain-schema.md)/[ADR-0005](docs/architecture/0005-authentication-architecture.md).
+
+### Authentication
+
+`packages/auth` bridges Supabase Auth (identity) to the application's `users` table (business data) — see [ADR-0005](docs/architecture/0005-authentication-architecture.md):
+
+- `createAuthService(...)`: `signUp` / `signIn` / `signOut` / `refreshSession` / `getCurrentSession` / `getCurrentUser` / `syncUser`, wrapping Supabase responses into `AppUser`/`AppSession` types — never a raw session or JWT.
+- Session helpers: `requireSession` / `optionalSession` / `requireUser` / `optionalUser` / `requireMembership` (confirms a membership row exists; does not check `role` — see ARCHITECTURE.md section 7).
+- `apps/web/src/middleware.ts` protects `/dashboard`, `/settings`, `/account`, `/api/private/*`, redirecting anonymous page requests to `/login?redirect=<path>` and returning a standard 401 JSON error for anonymous API requests. Never queries the application database — only verifies the Supabase session.
+- `apps/web/src/lib/api-auth.ts`: `withAuth` / `withUser` / `withMembership` Route Handler wrappers — compose with `withApiContext` for the standard error envelope, e.g. `export const GET = withApiContext(withUser(handler))`. See `GET /api/private/me` for a minimal worked example.
+
+No Google OAuth or RBAC permission enforcement yet.
+
+### Application shell
+
+The first production UI — see [ADR-0006](docs/architecture/0006-application-shell.md):
+
+- **Public:** `/`, `/login`, `/signup`, `/forgot-password`.
+- **Protected** (`/dashboard`, `/account`, `/settings`, `/profile`): a shared shell (`app/(protected)/layout.tsx`) with a responsive sidebar/navbar, resolved via `requireMembership` — redirects to `/login` if unauthenticated, shows a friendly access-denied screen if authenticated but not a member of any agency.
+- Login/signup/forgot-password are Server Actions calling `packages/auth` directly — never bypassed from a component.
+- No business feature UI (reviews, customers, businesses, campaigns, analytics) — the sidebar shows those as disabled "Coming soon" items.
 
 ### Health & readiness
 

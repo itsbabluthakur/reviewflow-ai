@@ -104,6 +104,8 @@ Responsibilities:
 
 Must never contain business logic.
 
+**Implementation status:** the first production application shell (public auth pages, protected dashboard/account/settings/profile, sidebar/navbar/user-menu navigation) is implemented — see [ADR-0006](docs/architecture/0006-application-shell.md). No business feature UI (reviews, customers, businesses, billing) yet; the sidebar shows those as disabled placeholders.
+
 ---
 
 ## Application Layer
@@ -202,6 +204,8 @@ Permission Check
 Access Granted
 ```
 
+**Implementation status** (`packages/auth`, see [ADR-0005](docs/architecture/0005-authentication-architecture.md)): Supabase Auth (JWT Verification, via `getUser()` — never the locally-decoded `getSession()`) and Load Tenant Context (`requireMembership` — confirms a membership row exists) are implemented. Permission Check (role/capability enforcement) is not — `requireMembership` deliberately stops at "a membership exists," not "this role permits this action." Google OAuth and password reset are not implemented; only email/password `signUp`/`signIn` exist so far.
+
 ---
 
 # 7. Authorization (RBAC)
@@ -222,6 +226,8 @@ Every API endpoint must verify:
 3. Role
 4. Permission
 
+**Implementation status:** `memberships.role` (Sprint 3A) stores one of `owner` / `admin` / `member` but nothing yet enforces it — steps 1–2 above are implemented (`requireUser`, `requireMembership`); steps 3–4 (role/permission enforcement) are future work, per ADR-0005's "Future RBAC" section.
+
 ---
 
 # 8. Core Modules
@@ -233,6 +239,8 @@ Every API endpoint must verify:
 - Password reset
 - Google OAuth
 - Session management
+
+**Implementation status:** `packages/auth` implements `signUp`/`signIn`/`signOut`/`refreshSession`/`getCurrentUser`/`getCurrentSession`/`syncUser`/`requestPasswordReset`, session helpers (`requireSession`/`optionalSession`/`requireUser`/`optionalUser`/`requireMembership`), and Edge-safe route-protection middleware. Login, signup, and forgot-password pages (`apps/web`) are implemented on top of these — see ADR-0006. Password reset is request-only (no `/reset-password` completion page yet); Google OAuth and MFA are not implemented.
 
 ---
 

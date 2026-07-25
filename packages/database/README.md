@@ -14,41 +14,49 @@ Drizzle ORM schema, client, migration/seed runners, and repository infrastructur
 ## What should NOT be placed here
 
 - Database migrations themselves (the SQL/DDL) — those live in `supabase/migrations`; this package only holds the ORM schema/client that describes them in code (see [`packages/README.md`](../README.md)).
-- Business tables or repositories (`customers`, `reviews`, `businesses`, `locations`, …) — Sprint 3B+. This package currently defines three tables: `users`, `agencies`, `memberships` — see `DATABASE.md` section 2a for exactly which columns are implemented today vs. still aspirational.
+- Business tables or repositories (`customers`, `reviews`, `businesses`, `locations`, …) — future work. This package currently defines three tables: `users`, `agencies`, `memberships` — see `DATABASE.md` section 2a for exactly which columns are implemented today vs. still aspirational.
 - Row Level Security policy SQL — see `supabase/policies`.
 - Supabase Auth/Storage/Realtime clients — see `@reviewflow/supabase`.
-- Authentication, RBAC/permission checks, or session handling — `memberships.role` is a data column only; enforcing it is out of scope until Sprint 3B+ (ROADMAP.md Phase 1).
+- Authentication itself, or RBAC/permission enforcement — see `@reviewflow/auth`. `memberships.role` remains a data column here; `requireMembership` (in that package) confirms a membership exists but does not check `role` — see ROADMAP.md Phase 1 and ADR-0005.
 
 ## Schema
 
-- **`users`** — platform user profiles (`email` unique, `full_name`, `avatar_url`).
+- **`users`** — platform user profiles (`email` unique, `full_name`, `avatar_url`, `auth_user_id` nullable/unique/indexed — links to a Supabase Auth identity; see [`@reviewflow/auth`](../auth/README.md) and [ADR-0005](../../docs/architecture/0005-authentication-architecture.md)).
 - **`agencies`** — tenant accounts (`name`, `slug` unique, `logo_url`, `timezone`).
 - **`memberships`** — joins a user to an agency with a `role` (`owner` | `admin` | `member`); unique on (`agency_id`, `user_id`).
 
 Relations: a user has many memberships, an agency has many memberships, a membership belongs to one user and one agency (`src/schema/*.ts`, via Drizzle's `relations()` — enables `db.query.memberships.findMany({ with: { user: true, agency: true } })`).
 
+`normalizeEmail(email)` (`src/normalize-email.ts`) canonicalizes an email (trim + lowercase) and throws `ValidationError` on empty input. `UserRepository.findByEmail`/`create` both normalize through it — never compare raw email strings. See [ADR-0005](../../docs/architecture/0005-authentication-architecture.md)'s "Email Normalization" section.
+
 ## Repositories
 
-`UserRepository`, `AgencyRepository`, and `MembershipRepository` (`src/repository/`) each extend `BaseRepository` and add infrastructure-only finders — no business logic:
+`UserRepository`, `AgencyRepository`, and `MembershipRepository` (`src/repository/`) each extend `BaseRepository` and add infrastructure-only finders — no business logic. Build them via `createRepositories(db)` (the repository factory) rather than constructing each one by hand:
 
 ```ts
-import {
-  getDb,
-  UserRepository,
-  AgencyRepository,
-  MembershipRepository,
-} from "@reviewflow/database";
+import { getDb, createRepositories } from "@reviewflow/database";
 
-const db = getDb();
-const users = new UserRepository(db);
-const agencies = new AgencyRepository(db);
-const memberships = new MembershipRepository(db);
+const repos = createRepositories(getDb()); // lazy: each repository is built on first access
 
-await users.findByEmail("admin@example.com");
-await agencies.findBySlug("demo");
-await agencies.findMembers(agencyId); // users belonging to the agency
-await users.findUserAgencies(userId); // agencies the user belongs to
-await memberships.findByAgencyAndUser(agencyId, userId);
+await repos.users.findByEmail("admin@example.com");
+await repos.users.findByAuthUserId(authUserId);
+await repos.agencies.findBySlug("demo");
+await repos.agencies.findMembers(agencyId); // users belonging to the agency
+await repos.users.findUserAgencies(userId); // agencies the user belongs to
+await repos.memberships.findByAgencyAndUser(agencyId, userId);
+```
+
+`createRepositories` also accepts a `Transaction` handle (from `withTransaction`), so multiple repositories built from one factory call commit atomically:
+
+```ts
+import { getDb, withTransaction, createRepositories } from "@reviewflow/database";
+
+await withTransaction(getDb(), async (tx) => {
+  const repos = createRepositories(tx);
+  const user = await repos.users.create({ email: "a@example.com", fullName: "A" });
+  const agency = await repos.agencies.create({ name: "Acme", slug: "acme", timezone: "UTC" });
+  await repos.memberships.create({ agencyId: agency.id, userId: user.id, role: "owner" });
+});
 ```
 
 ## Usage

@@ -2,6 +2,8 @@ export { AppError, type AppErrorOptions } from "./app-error";
 export { ValidationError } from "./validation-error";
 export { ConfigurationError } from "./configuration-error";
 export { DatabaseError } from "./database-error";
+export { AuthenticationError } from "./authentication-error";
+export { AuthorizationError } from "./authorization-error";
 export {
   toApiSuccessResponse,
   toApiErrorResponse,

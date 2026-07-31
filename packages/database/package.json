@@ -18,11 +18,11 @@
     "clean": "rimraf .turbo dist node_modules"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "^26",
     "drizzle-kit": "^0.31.10",
-    "eslint": "^9",
+    "eslint": "^10",
     "tsx": "^4.23.1",
-    "typescript": "^5",
+    "typescript": "^7",
     "vitest": "^4.1.10"
   },
   "dependencies": {

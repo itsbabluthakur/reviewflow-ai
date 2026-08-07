@@ -14,9 +14,9 @@
     "clean": "rimraf .turbo dist node_modules"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "eslint": "^9",
-    "typescript": "^5"
+    "@types/node": "^26",
+    "eslint": "^10",
+    "typescript": "^7"
   },
   "dependencies": {
     "@reviewflow/errors": "workspace:*",

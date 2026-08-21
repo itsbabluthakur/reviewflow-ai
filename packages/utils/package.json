@@ -19,8 +19,8 @@
     "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
-    "eslint": "^9",
-    "typescript": "^5",
+    "eslint": "^10",
+    "typescript": "^7",
     "vitest": "^4.1.10"
   }
 }
